@@ -18,36 +18,58 @@ public class VotingCentre {
     private GamEncoderDecoder decoder = new GamEncoderDecoder();
     //public void decodeMsg(){}
 
-    private boolean isEDSCorrect(BigInteger EDS, BigInteger e, BigInteger n, BigInteger hash){
+    public boolean isEDSCorrect(BigInteger EDS, BigInteger e, BigInteger n, BigInteger hash){
         return hash.equals(EDS.modPow(e, n));
     }
 
     private ObservableList<Elector> elector_list = FXCollections.observableArrayList(
-            new Elector("009796001", "Антон", "Головенко", "Михайлович"),
-            new Elector("009796002", "Наталія", "Парасюк", "Валеріївна"),
-            new Elector("009796003", "Валерій", "Смолєнцев", "Ігорович"),
-            new Elector("009796004", "Олександр", "Ручкін", "Максимович"),
-            new Elector("009796005", "Олена", "Димитрова", "Микитівна"),
-            new Elector("009796006", "Микола", "Миколенко", "Миколайович"),
-            new Elector("009796007", "Єкатерина", "Скуфенко", "Єфімівна"),
-            new Elector("009796008", "Ігор", "Острозький", "Петрович")
+            new Elector( "Антон", "Головенко", "Михайлович", null),
+            new Elector( "Наталія", "Парасюк", "Валеріївна", null),
+            new Elector( "Валерій", "Смолєнцев", "Ігорович", null),
+            new Elector( "Олександр", "Ручкін", "Максимович", null),
+            new Elector( "Олена", "Димитрова", "Микитівна", null),
+            new Elector( "Микола", "Миколенко", "Миколайович", null),
+            new Elector( "Єкатерина", "Скуфенко", "Єфімівна", null),
+            new Elector("Ігор", "Острозький", "Петрович", null)
     );
 
     private ObservableList<Candidate> candidate_list = FXCollections.observableArrayList(
-            new Candidate("009796009", "Петро", "Горошенко", "Олександрович", 1),
-            new Candidate("009796010", "Володимир", "Дученко", "Олексійович", 2),
-            new Candidate("009796011", "Ольга", "Ювелірова", "Сергіївна", 3),
-            new Candidate("009796012", "Максим", "Собаченко", "Іванович", 4),
-            new Candidate("009796013", "Вікторія", "Іпова", "Генадіївна", 5)
+            new Candidate( "Петро", "Горошенко", "Олександрович", 1),
+            new Candidate( "Володимир", "Дученко", "Олексійович", 2),
+            new Candidate( "Ольга", "Ювелірова", "Сергіївна", 3),
+            new Candidate( "Максим", "Собаченко", "Іванович", 4),
+            new Candidate( "Вікторія", "Іпова", "Генадіївна", 5)
     );
 
 
-    public void addNewVote(int[] msg, BigInteger EDS, BigInteger keyN, BigInteger keyE){
-        String decoded_msg = decoder.decode(msg, this.gamma);
-        System.out.println("Decoded : " + decoded_msg);
-        System.out.println("Message hash : " + calc.calculateHash(decoded_msg, keyN));
-        System.out.println("EDS hash : " + EDS.modPow(keyE, keyN));
-        //System.out.println("Done " +msg);
+    public void addNewVote(String firstname, String lastname, String fname, int[] msg, BigInteger EDS, BigInteger keyN, BigInteger keyE){
+        System.out.println(firstname + lastname + fname);
+        if(isElectorInList(firstname, lastname, fname, keyN)){
+            String decoded_msg = decoder.decode(msg, this.gamma);
+            candidate_list.get((Integer.parseInt(decoded_msg)-16)/100).add_vote();
+            System.out.println("Decoded : " + decoded_msg);
+            System.out.println("Message hash : " + calc.calculateHash(decoded_msg, keyN));
+            System.out.println("EDS hash : " + EDS.modPow(keyE, keyN));
+        }
+        else{
+            System.out.println("Ви на маєте права голосувати!");
+        }
+    }
+
+    public boolean isElectorInList(String firstName, String lastName, String fatherName, BigInteger keyN) {
+        for (Elector elector : getElector_list()) {
+            if (elector.getFirstName().equals(firstName) &&
+                    elector.getLastName().equals(lastName) &&
+                    elector.getFatherName().equals(fatherName)) {
+                if(elector.getPublicKeyN() == null){
+                    elector.setPublicKeyN(keyN);
+                    return true;
+                }
+                else{ System.out.println("Ви вже голосували!");
+                    return false;} // виборця знайдено, голосував
+            }
+        }
+        return false; // немає такого виборця
     }
 
     public ObservableList<Elector> getElector_list() {

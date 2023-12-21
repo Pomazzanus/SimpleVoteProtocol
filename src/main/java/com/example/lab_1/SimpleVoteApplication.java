@@ -14,7 +14,6 @@ public class SimpleVoteApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(SimpleVoteApplication.class.getResource("ballot-view-l1.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         MainController controller = fxmlLoader.getController();
-        // Передайте данные в контроллер
         controller.setCandidateData(votingCentre.getCandidate_list());
         stage.setTitle("Електронне голосування lab1");
         stage.setResizable(false);

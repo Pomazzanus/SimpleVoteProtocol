@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.math.BigInteger;
@@ -37,6 +38,14 @@ public class MainController {
     private TableColumn<Candidate, String> lname;
     @FXML
     private TableColumn<Candidate, String> faname;
+    @FXML
+    private TableColumn<Candidate, Integer> numVotes;
+    @FXML
+    private TextField firstnameField;
+    @FXML
+    private TextField lastnameField;
+    @FXML
+    private TextField fnameField;
     private int ballot_count = 1;
     VotingCentre votingCentre = new VotingCentre();
     @FXML
@@ -46,24 +55,24 @@ public class MainController {
         Date currentDate = new Date();
         String formattedDate = dateFormat.format(currentDate);
         dateLabel.setText(formattedDate);
+
     }
 
     public void setCandidateData(ObservableList<Candidate> data) {
         candidate_data = data;
-        updateList();
-    }
-    public void updateList(){
         idColumn.setCellValueFactory(new PropertyValueFactory<Candidate,Integer>("ballot_list_id"));
         lname.setCellValueFactory(new PropertyValueFactory<Candidate,String>("lastName"));
         fname.setCellValueFactory(new PropertyValueFactory<Candidate,String>("firstName"));
         faname.setCellValueFactory(new PropertyValueFactory<Candidate,String>("fatherName"));
+        numVotes.setCellValueFactory(new PropertyValueFactory<Candidate,Integer>("num_votes"));
         candidate_table.setItems(candidate_data);
     }
 
     @FXML
     protected void onNewButtonClick() {
         initialize();
-        candidate_table.getSelectionModel().clearSelection();
+        candidate_table.setItems(votingCentre.getCandidate_list());
+        candidate_table.refresh();
     }
     @FXML
     protected void onNextButtonClick() {
@@ -72,15 +81,9 @@ public class MainController {
         System.out.println(msg);
         System.out.println("Підписуємо");
         System.out.println("ЕЦП - " + ballot.signEDS(String.valueOf(msg)));
-        votingCentre.addNewVote(encoder.encode(String.valueOf(msg), gamma), ballot.signEDS(String.valueOf(msg)), ballot.getN(), ballot.getE());
-        System.out.println("Бланк закодовано!");
-        //System.out.println(encoder.encode(String.valueOf(msg), gamma) + "Niggers");
+        votingCentre.addNewVote(firstnameField.getText(), lastnameField.getText(), fnameField.getText(),
+                encoder.encode(String.valueOf(msg), gamma), ballot.signEDS(String.valueOf(msg)),
+                ballot.getN(), ballot.getE());
         onNewButtonClick();
-        //Ballot ballot = new Ballot(ballot_count +=1);
-       // System.out.println(msg);
-        //BigInteger signed = ballot.signEDS(String.valueOf(msg));
-        //Ballot ballot = new Ballot(ballot_count);
-        //ballot.signEDS("IHateNiggers");
-
     }
 }

@@ -1,14 +1,9 @@
 package com.example.lab_1.VoteParticipants;
 
 public abstract class Person {
-    private String id;
     private String firstName;
     private String lastName;
     private String fatherName;
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -23,15 +18,10 @@ public abstract class Person {
     }
 
 
-    public Person(String id, String firstName, String lastName, String fatherName) {
-        this.id = id;
+    public Person(String firstName, String lastName, String fatherName) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.fatherName = fatherName;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getFirstName() {
